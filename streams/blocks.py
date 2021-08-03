@@ -92,6 +92,7 @@ class PersonBlock(blocks.PageChooserBlock, ThemeableBlock):
             return {
                 'id': value.id,
                 'title': value.title,
+                'position': value.position,
                 'url': value.url,
             }
 
@@ -975,3 +976,65 @@ class TimelineGalleryBlock(blocks.StructBlock):
         icon = 'image'
         label = 'Timeline Gallery'
         template = 'streams/timeline_gallery_block.html'
+
+
+class SlideQuoteBlock(blocks.StructBlock):
+    quote = blocks.RichTextBlock(
+        features=['bold', 'italic', 'link'],
+        required=True,
+    )
+    quote_author = blocks.RichTextBlock(
+        features=['bold', 'italic', 'link'],
+        required=False,
+    )
+
+    class Meta:
+        icon = 'pencil'
+        label = 'Slide Quote'
+
+
+class SlideAcknowledgedGroupBlock(blocks.StructBlock):
+    title = blocks.CharBlock()
+    people = blocks.StreamBlock(
+        [
+            ('page', PersonBlock('people.PersonPage')),
+        ]
+    )
+
+    class Meta:
+        icon = 'user-friends'
+        label = 'Acknowledged Group'
+
+
+class SlideLinkBlock(blocks.StructBlock):
+    class LinkTypeChoices(models.TextChoices):
+        EVENT = ('EVENT', 'Event')
+        MEDIA = ('MEDIA', 'Media')
+        OPINION = ('OPINION', 'Opinion')
+        PODCAST = ('PODCAST', 'Podcast')
+        PUBLICATION = ('PUBLICATION', 'Publication')
+        VIDEO = ('VIDEO', 'Video')
+
+    title = blocks.RichTextBlock(features=['bold', 'italic'], required=True)
+    url = blocks.URLBlock(required=True)
+    type = blocks.ChoiceBlock(
+        choices=LinkTypeChoices.choices,
+        verbose_name='Type',
+        required=True,
+    )
+
+    class Meta:
+        icon = 'link'
+        label = 'Link'
+
+
+class SlideTabBlock(blocks.StructBlock):
+    title = blocks.CharBlock()
+    body = blocks.StreamBlock([
+        ('paragraph', ParagraphBlock()),
+        ('table', TableStreamBlock())
+    ])
+
+    class Meta:
+        icon = 'table'
+        label = 'Tab'

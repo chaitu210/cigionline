@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load webpack_loader %}
+
+{% block extra_css %}
+  {% render_bundle 'annualReportPage' 'css' %}
+{% endblock %}
+
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_js %}
+    {{ annual_report_json|json_script:"annual-report-json" }}
+    {% render_bundle 'annualReportInteractives' 'js' attrs='defer' %}
+{% endblock %}
+
+{% block content %}
+    <div id="annual-report-interactives"></div>
+{% endblock content %}
+
