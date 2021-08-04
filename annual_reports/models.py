@@ -22,6 +22,7 @@ from wagtail.core.models import Page, Orderable
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 
+from publications.models import PublicationPage
 from streams.blocks import (
     SlideQuoteBlock,
     PersonBlock,
@@ -214,7 +215,7 @@ class BaseSlidePage(Orderable, ShareablePageAbstract, Page):
         related_name='+',
         verbose_name='Background video',
     )
-    quote = StreamField([('quote', SlideQuoteBlock())], min_num=1, max_num=1, blank=True)
+    quote = StreamField([('quote', SlideQuoteBlock())], min_num=0, max_num=1, blank=True)
 
     background_panel = MultiFieldPanel(
         [
@@ -232,16 +233,28 @@ class BaseSlidePage(Orderable, ShareablePageAbstract, Page):
     class Meta:
         abstract = True
 
+    def as_json(self):
+        return {
+            "id": self.id,
+            "translation_key": self.translation_key,
+            "type": self._meta.model_name,
+            "value": {
+                "title": self.title,
+                "slug": self.slug,
+                "url": self.get_url(current_site=self.get_site()),
+                "locale": self.locale.language_code,
+                "background_image": self.background_image_dict,
+                "background_video": self.background_video_dict,
+                "quote": self.quote_dict,
+            },
+        }
+
     @property
     def quote_dict(self):
         quote = None
         if len(self.quote):
             first_quote = self.quote[0]
-            child_blocks = first_quote.block.child_blocks
-            quote = {
-                'quote': child_blocks['quote'].render(first_quote.value['quote']),
-                'author': child_blocks['quote_author'].render(first_quote.value['quote_author']),
-            }
+            quote = first_quote.block.get_api_representation(first_quote.value)
         return quote
 
     @property
@@ -260,22 +273,6 @@ class BaseSlidePage(Orderable, ShareablePageAbstract, Page):
         return {
             "original": self.background_video.url,
             "thumbnail": self.background_video.thumbnail.url if self.background_video.thumbnail else None,
-        }
-
-    def as_json(self):
-        return {
-            "id": self.id,
-            "translation_key": self.translation_key,
-            "type": self._meta.model_name,
-            "value": {
-                "title": self.title,
-                "slug": self.slug,
-                "url": self.get_url(current_site=self.get_site()),
-                "locale": self.locale.language_code,
-                "background_image": self.background_image_dict,
-                "background_video": self.background_video_dict,
-                "quote": self.quote_dict,
-            },
         }
 
     def get_template(self, request, *args, **kwargs):
@@ -317,7 +314,7 @@ class SummarySlidePage(BaseSlidePage):
 
     def as_json(self):
         acknowledgement = {
-            "message": [message.block.render(message) for message in self.acknowledgement_message],
+            "message": self.acknowledgement_message.stream_block.get_api_representation(self.acknowledgement_message),
             "groups": self.acknowledged_groups.stream_block.get_api_representation(self.acknowledged_groups)
         }
 
@@ -349,7 +346,7 @@ class MessageSlidePage(BaseSlidePage):
 
     def as_json(self):
         data = {
-            "body": [body.block.render(body) for body in self.body],
+            "body": self.body.stream_block.get_api_representation(self.body),
             "author": PersonBlock('people.Person').get_api_representation(self.author),
         }
         json_response = super().as_json()
@@ -374,7 +371,7 @@ class ContentSlidePage(BaseSlidePage):
     def as_json(self):
         data = {
             "links": self.links.stream_block.get_api_representation(self.links),
-            "body": self.body.stream_block.render(self.body)
+            "body": self.body.stream_block.get_api_representation(self.body)
         }
         json_response = super().as_json()
         json_response['value'].update(data)
@@ -398,7 +395,7 @@ class TabbedSlidePage(BaseSlidePage):
 
     def as_json(self):
         data = {
-            "tabs": self.tabs.stream_block.render(self.tabs)
+            "tabs": self.tabs.stream_block.get_api_representation(self.tabs)
         }
         json_response = super().as_json()
         json_response['value'].update(data)
