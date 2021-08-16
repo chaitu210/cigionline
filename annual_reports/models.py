@@ -187,7 +187,8 @@ class AnnualReportPage(RoutablePageMixin, FeatureablePageAbstract, Page, Searcha
         }
 
     @route(r'^interactives/(?P<locale>[\w-]+)/$')
-    def interactives(self, request, locale):
+    @route(r'^interactives/(?P<locale>[\w-]+)/(?P<slug>[\w-]+)/$')
+    def interactives(self, request, locale, slug=None):
         with translation.override(locale):
             page = self.localized
         return self.render(

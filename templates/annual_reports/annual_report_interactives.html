@@ -14,7 +14,10 @@
     {% render_bundle 'annualReportInteractives' 'js' attrs='defer' %}
 {% endblock %}
 
+{% block body_class %}annual-report-interactives{% endblock %}
+
 {% block content %}
+    <div id="annual-report-interactives-menu"></div>
     <div id="annual-report-interactives"></div>
 {% endblock content %}
 
