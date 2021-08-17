@@ -1,10 +1,55 @@
 import React, { useState } from "react";
+import queryString from 'query-string';
+
 
 const TableOfContents = ({ rootUrl, slide, slides }) => {
   const [contentOpacity, updatecontentOpacity] = useState(true);
   const [socialIcons, updatesocialIcons] = useState(true);
   const originUrl = window.location.origin;
+  const currentPath = window.location.pathname;
   const location = window.location.href;
+  const params = queryString.parse(window.location.search);
+  const isAcknowledgements = (params.acknowledgements == 'true' || params.remerciements == 'true') ? true : false;
+  const language = localStorage.getItem("language")
+    ? localStorage.getItem("language")
+    : "en";
+
+  function loadAcknowledgements() {
+    return slide.value.acknowledgement.groups
+      .map(function (group, index) {
+        return (
+          <>
+            <div class="grid-x credits-content">
+              <div class="cell full">
+                <h4 class="credits-title">{ group.value.title }</h4>
+              </div>
+            </div>
+            <div class="grid-x credits-content">
+            {group.value.people.map(function (person, index) {
+                return (
+                  <div class="cell medium-3 small-4 credits-block">
+                    <h5>{ person.value.title }</h5>
+                    <h6>{ person.value.position }</h6>
+                    <div></div>
+                  </div>
+                );
+              })}
+            </div>
+            <div class="grid-x credits-content credits-border">
+              {group.value.people.map(function (person, index) {
+                return (
+                  <div class="cell small-4 credits-block show-for-small-only">
+                    <h5>{ person.value.title }</h5>
+                    <h6>{ person.value.position }</h6>
+                    <div></div>
+                  </div>
+                );
+              })}
+            </div>
+
+          </>);
+      });
+  }
 
   function firstHalfSlides() {
     var slidesExceptTOC = slides.filter(function (iterslide) {
@@ -143,23 +188,51 @@ const TableOfContents = ({ rootUrl, slide, slides }) => {
               >
                 <div className="cell">
                   <div className="toc-content">
-                    <div className="toc-menu">
-                      Table of Contents
+                    { isAcknowledgements ?
+                    <div class="toc-menu">
+                      <a class="hide-acknowledgements-btn" type="button" href={originUrl+currentPath}>{ slide.value.title }</a>
                       <span>/</span>
-                      <button
+                        { language == 'en' ? 'Acknowledgements' : 'Remerciements' }
+                    </div>
+                    : 
+                    <div className="toc-menu">
+                      { slide.value.title }
+                      <span>/</span>
+                      { language == 'en' ?
+                      <a
                         className="show-acknowledgements-btn"
                         type="button"
-                        data-ember-action=""
-                        data-ember-action-1403="1403"
+                        href="?acknowledgements=true"
                       >
                         Acknowledgements
-                      </button>
+                      </a> : 
+                      <a
+                        className="show-acknowledgements-btn"
+                        type="button"
+                        href="?remerciements=true"
+                      >
+                        Remerciements
+                      </a>
+                      }
                     </div>
+                    }
+                    { isAcknowledgements ? 
+                      <>
+                        <div class="grid-x credits-content credits-border">
+                          <div class="cell full">
+                            <p class="credits-message" dangerouslySetInnerHTML={{
+                        __html: slide.value.acknowledgement.message[0].value}}>
+                            </p>
+                          </div>
+                        </div>
+                        {loadAcknowledgements()}
+                      </> :
                     <div className="grid-x slide-content">
                       <div className="cell medium-5">{firstHalfSlides()}</div>
                       <div className="cell medium-2"></div>
                       <div className="cell medium-5">{secondHalfSlides()}</div>
                     </div>
+                    }
                   </div>
                 </div>
               </div>
