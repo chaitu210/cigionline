@@ -2,12 +2,17 @@ import React, { useRef, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import MenuPortal from "./MenuPortal";
+import {
+  language,
+  siteUrl,
+  currentSlug,
+  lightBackgroundSlugs,
+} from "./AnnualReportConstants";
 
 const AnnualReportMenu = ({
   toggleMenu,
   isOpen,
   otherLangSlug,
-  language,
   slides,
   slideindex,
   lightBackgroundSlugs
@@ -15,17 +20,9 @@ const AnnualReportMenu = ({
   const history = useHistory();
 
   const setLanguage = (e) => {
-    const location = window.location.href;
-    const splitUrl = location.split("/");
-    const siteUrl =
-      splitUrl.length == 10
-        ? splitUrl.slice(0, splitUrl.length - 3).join("/")
-        : splitUrl.slice(0, splitUrl.length - 2).join("/");
     if (language == "en") {
-      localStorage.setItem("language", "fr");
       window.location.href = `${siteUrl}/fr/${otherLangSlug}`;
     } else {
-      localStorage.setItem("language", "en");
       window.location.href = `${siteUrl}/en/${otherLangSlug}`;
     }
   };

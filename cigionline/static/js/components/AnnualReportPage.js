@@ -94,7 +94,6 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
         toggleMenu={toggleMenu}
         isOpen={isOpen}
         otherLangSlug={otherLangSlug}
-        language={language}
         slides={slides}
         slideindex={slideindex}
         lightBackgroundSlugs={lightBackgroundSlugs}
@@ -176,7 +175,7 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
               })}
             </Swiper>
           ) : (
-            <HomeSlide year={year} language={language} />
+            <HomeSlide year={year} />
           )}
           {slideindex >= 0 ? (
             <button

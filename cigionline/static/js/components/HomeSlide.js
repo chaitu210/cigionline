@@ -1,6 +1,9 @@
 import React, { Component } from "react";
+import {
+  language
+} from "./AnnualReportConstants";
 
-const HomeSlide = ({ year, language }) => {
+const HomeSlide = ({ year }) => {
   return (
     <div class="liquid-container" style={{}}>
       <div
