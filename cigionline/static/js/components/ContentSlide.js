@@ -1,13 +1,7 @@
 import React, { useState, useEffect, Component } from "react";
 import Footer from "./Footer";
 
-
-const ContentSlide = ({ slide }) => {
-  const [contentOpacity, updatecontentOpacity] = useState(true);
-  const [socialIcons, updatesocialIcons] = useState(true);
-  const originUrl = window.location.origin;
-  const location = window.location.href;
-
+const ContentSlide = ({ slide, contentOpacity }) => {
   function contentLinkIcon(linkType) {
     if (linkType == "PUBLICATION") {
       return (
@@ -99,21 +93,59 @@ const ContentSlide = ({ slide }) => {
           ></path>
         </svg>
       );
-    }
-     else if (linkType.toUpperCase() == "EXPERTS") {
+    } else if (linkType.toUpperCase() == "EXPERTS") {
       return (
-        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false" aria-hidden="true" data-icon="comment-dots" data-prefix="fal" class="svg-inline--fa fa-comment-dots fa-w-16 fa-lg"><path fill="currentColor" d="M128 216c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zM256 32C114.6 32 0 125.1 0 240c0 47.6 19.9 91.2 52.9 126.3C38 405.7 7 439.1 6.5 439.5c-6.6 7-8.4 17.2-4.6 26S14.4 480 24 480c61.5 0 110-25.7 139.1-46.3C192 442.8 223.2 448 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zm0 384c-28.3 0-56.3-4.3-83.2-12.8l-15.2-4.8-13 9.2c-23 16.3-58.5 35.3-102.6 39.6 12-15.1 29.8-40.4 40.8-69.6l7.1-18.7-13.7-14.6C47.3 313.7 32 277.6 32 240c0-97 100.5-176 224-176s224 79 224 176-100.5 176-224 176z"></path>
-</svg>
+        <svg
+          viewBox="0 0 512 512"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          focusable="false"
+          aria-hidden="true"
+          data-icon="comment-dots"
+          data-prefix="fal"
+          class="svg-inline--fa fa-comment-dots fa-w-16 fa-lg"
+        >
+          <path
+            fill="currentColor"
+            d="M128 216c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zM256 32C114.6 32 0 125.1 0 240c0 47.6 19.9 91.2 52.9 126.3C38 405.7 7 439.1 6.5 439.5c-6.6 7-8.4 17.2-4.6 26S14.4 480 24 480c61.5 0 110-25.7 139.1-46.3C192 442.8 223.2 448 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zm0 384c-28.3 0-56.3-4.3-83.2-12.8l-15.2-4.8-13 9.2c-23 16.3-58.5 35.3-102.6 39.6 12-15.1 29.8-40.4 40.8-69.6l7.1-18.7-13.7-14.6C47.3 313.7 32 277.6 32 240c0-97 100.5-176 224-176s224 79 224 176-100.5 176-224 176z"
+          ></path>
+        </svg>
       );
     } else if (linkType == "SUBSCRIBE") {
       return (
-        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false" aria-hidden="true" data-icon="envelope" data-prefix="fal" class="svg-inline--fa fa-envelope fa-w-16 fa-lg"><path fill="currentColor" d="M464 64H48C21.5 64 0 85.5 0 112v288c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM48 96h416c8.8 0 16 7.2 16 16v41.4c-21.9 18.5-53.2 44-150.6 121.3-16.9 13.4-50.2 45.7-73.4 45.3-23.2.4-56.6-31.9-73.4-45.3C85.2 197.4 53.9 171.9 32 153.4V112c0-8.8 7.2-16 16-16zm416 320H48c-8.8 0-16-7.2-16-16V195c22.8 18.7 58.8 47.6 130.7 104.7 20.5 16.4 56.7 52.5 93.3 52.3 36.4.3 72.3-35.5 93.3-52.3 71.9-57.1 107.9-86 130.7-104.7v205c0 8.8-7.2 16-16 16z"></path>
-</svg>
+        <svg
+          viewBox="0 0 512 512"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          focusable="false"
+          aria-hidden="true"
+          data-icon="envelope"
+          data-prefix="fal"
+          class="svg-inline--fa fa-envelope fa-w-16 fa-lg"
+        >
+          <path
+            fill="currentColor"
+            d="M464 64H48C21.5 64 0 85.5 0 112v288c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM48 96h416c8.8 0 16 7.2 16 16v41.4c-21.9 18.5-53.2 44-150.6 121.3-16.9 13.4-50.2 45.7-73.4 45.3-23.2.4-56.6-31.9-73.4-45.3C85.2 197.4 53.9 171.9 32 153.4V112c0-8.8 7.2-16 16-16zm416 320H48c-8.8 0-16-7.2-16-16V195c22.8 18.7 58.8 47.6 130.7 104.7 20.5 16.4 56.7 52.5 93.3 52.3 36.4.3 72.3-35.5 93.3-52.3 71.9-57.1 107.9-86 130.7-104.7v205c0 8.8-7.2 16-16 16z"
+          ></path>
+        </svg>
       );
     } else if (linkType == "PARTNERS") {
       return (
-        <svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false" aria-hidden="true" data-icon="file-alt" data-prefix="fal" class="svg-inline--fa fa-file-alt fa-w-12 fa-lg"><path fill="currentColor" d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zm-22.6 22.7c2.1 2.1 3.5 4.6 4.2 7.4H256V32.5c2.8.7 5.3 2.1 7.4 4.2l83.9 83.9zM336 480H48c-8.8 0-16-7.2-16-16V48c0-8.8 7.2-16 16-16h176v104c0 13.3 10.7 24 24 24h104v304c0 8.8-7.2 16-16 16zm-48-244v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm0 64v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm0 64v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12z"></path>
-</svg>
+        <svg
+          viewBox="0 0 384 512"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          focusable="false"
+          aria-hidden="true"
+          data-icon="file-alt"
+          data-prefix="fal"
+          class="svg-inline--fa fa-file-alt fa-w-12 fa-lg"
+        >
+          <path
+            fill="currentColor"
+            d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zm-22.6 22.7c2.1 2.1 3.5 4.6 4.2 7.4H256V32.5c2.8.7 5.3 2.1 7.4 4.2l83.9 83.9zM336 480H48c-8.8 0-16-7.2-16-16V48c0-8.8 7.2-16 16-16h176v104c0 13.3 10.7 24 24 24h104v304c0 8.8-7.2 16-16 16zm-48-244v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm0 64v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm0 64v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12z"
+          ></path>
+        </svg>
       );
     }
   }
@@ -150,22 +182,6 @@ const ContentSlide = ({ slide }) => {
     });
   }
 
-  const changeStyle = (e) => {
-    if (contentOpacity) {
-      updatecontentOpacity(false);
-    } else {
-      updatecontentOpacity(true);
-    }
-  };
-
-  const changeSocialStyle = (e) => {
-    if (socialIcons) {
-      updatesocialIcons(false);
-    } else {
-      updatesocialIcons(true);
-    }
-  };
-
   const getWidth = () => {
     let width = 0;
     for (let i = 1; i < 5; i++) {
@@ -175,110 +191,35 @@ const ContentSlide = ({ slide }) => {
   };
 
   return (
-    <div className="liquid-container" style={{}}>
-      <div
-        className="liquid-child"
-        style={{ top: 0, left: 0, opacity: 1 }}
-      >
-            <div className="background-row show-for-medium" style={{}}>
-              <div
-                className="background-image"
-                style={{
-                  backgroundImage: slide.value.background_image
-                    ? `url(${originUrl}${slide.value.background_image.original})`
-                    : "",
-                }}
-              >
-                <div
-                  className="hover-reveal hover-reveal-gradient-right"
-                  style={{ opacity: contentOpacity ? 0 : 1 }}
+    <div
+      className="content-slide hover-reveal-hide"
+      style={{ opacity: contentOpacity ? 1 : 0 }}
+    >
+      <div>
+        <div className="slide-content grid-container">
+          <div className="grid-x grid-margin-x">
+            <div className="cell large-6">
+              <div className="slide-title">
+                <h1>{slide.value.title}</h1>
+              </div>
+              <div className="content-links">{loadContentLinks()}</div>
+            </div>
+            <div className="cell large-6 paragraphs">
+              <div dangerouslySetInnerHTML={{ __html: loadBody() }}></div>
+              <div className="content-links-mobile hide-for-large">
+                <a
+                  className="clearfix content-link-mobile"
+                  href="https://www.cigionline.org/sites/default/files/documents/Strategic_Plan-2020-web-2_1.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <div
-                    className="quote quote-right"
-                    style={{ opacity: contentOpacity ? 0 : 1 }}
-                  >
-                    <h3
-                      className="hover-reveal-quote"
-                      style={{ opacity: contentOpacity ? 0 : 1 }}
-                      dangerouslySetInnerHTML={{
-                        __html: slide.value.quote
-                          ? slide.value.quote.message
-                          : "",
-                      }}
-                    ></h3>
-                    <h4
-                      className="hover-reveal-quote-source"
-                      style={{ opacity: contentOpacity ? 0 : 1 }}
-                      dangerouslySetInnerHTML={{
-                        __html: slide.value.quote
-                          ? slide.value.quote.subtitle
-                          : "",
-                      }}
-                    ></h4>
-                    <div
-                      className="hover-reveal-quote-line"
-                      style={{ width: contentOpacity ? 0 : 100 }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                {slide.value.background_video ? (
-                  <video
-                    playsinline=""
-                    autoplay=""
-                    muted=""
-                    loop=""
-                    id="background-video"
-                    className="video-background"
-                  >
-                    <source
-                      src={`${originUrl}${slide.value.background_video.original}`}
-                      type="video/mp4"
-                    />
-                  </video>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="background-overlay hover-reveal-hide"></div>
-              <div className="background-gradient-overlay hover-reveal-hide"></div>
-            </div>
-            <div
-              className="content-slide hover-reveal-hide"
-              style={{ opacity: contentOpacity ? 1 : 0 }}
-            >
-              <div>
-                <div className="slide-content grid-container">
-                  <div className="grid-x grid-margin-x">
-                    <div className="cell large-6">
-                      <div className="slide-title">
-                        <h1>{slide.value.title}</h1>
-                      </div>
-                      <div className="content-links">{loadContentLinks()}</div>
-                    </div>
-                    <div className="cell large-6 paragraphs">
-                      <div
-                        dangerouslySetInnerHTML={{ __html: loadBody() }}
-                      ></div>
-                      <div className="content-links-mobile hide-for-large">
-                        <a
-                          className="clearfix content-link-mobile"
-                          href="https://www.cigionline.org/sites/default/files/documents/Strategic_Plan-2020-web-2_1.pdf"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Read CIGI’s new Strategic Plan focused on shaping
-                          governance in a digital era.
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  Read CIGI’s new Strategic Plan focused on shaping governance
+                  in a digital era.
+                </a>
               </div>
             </div>
-            
-            <Footer slide={slide} socialIcons={socialIcons} contentOpacity={contentOpacity} changeStyle={changeStyle} changeSocialStyle={changeSocialStyle} />
+          </div>
+        </div>
       </div>
     </div>
   );
