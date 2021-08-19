@@ -17,32 +17,23 @@
       var ovrl = id("loading-container"),
         prog = id("loading-progress"),
           stat = id("progstat"),
-          img = document.images,
-          c = 0,
-          tot = img.length;
+          c = 0;
       ovrl.style.display = "block";
-      if(tot == 0) return doneLoading();
-  
-      function imgLoaded(){
-        c += 1;
-        var perc = ((100/tot*c) << 0) +"%";
-        prog.className = "progress";
-        prog.classList.add('update-'+ ((100/tot*c) << 0));
-        stat.innerHTML = perc;
-        if(c===tot) return doneLoading();
-      }
-      function doneLoading(){
-        ovrl.style.opacity = 0;
-        setTimeout(function(){ 
-          ovrl.style.display = "none";
-        }, 1200);
-      }
-      for(var i=0; i<tot; i++) {
-        var tImg     = new Image();
-        tImg.onload  = imgLoaded;
-        tImg.onerror = imgLoaded;
-        tImg.src     = img[i].src;
-      }    
+      var load = function() {
+          c += 1;
+          var perc = c +"%";
+          prog.className = "progress";
+          prog.classList.add('update-'+ c);
+          stat.innerHTML = perc;
+          if (c == 100) {
+              clearInterval(beginLoad);
+              ovrl.style.display = "none";
+          }
+      };
+
+      var beginLoad = setInterval(function() {
+          load();
+      }, 0.05);
     }
     document.addEventListener('DOMContentLoaded', loadbar, false);
   }());

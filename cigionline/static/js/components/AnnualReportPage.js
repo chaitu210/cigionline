@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { debounce } from 'lodash';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { render } from "react-dom";
@@ -19,14 +20,17 @@ import HomeSlide from "./HomeSlide";
 import Slide from "./Slide";
 
 // import Swiper core and required modules
-import SwiperCore, { Autoplay, Pagination, Navigation } from "swiper/core";
+import SwiperCore, { Autoplay, Pagination, Navigation, Keyboard } from "swiper/core";
 
 // install Swiper modules
-SwiperCore.use([Autoplay, Pagination, Navigation]);
+SwiperCore.use([Autoplay, Pagination, Navigation, Keyboard]);
 
 const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
+  const lightBackgroundSlugs = ['messageslidepage', 'tabbedslidepage', 'outputsandactivitiesslidepage'];
+
+  console.log(slideindex, slides.length)
 
   const language = localStorage.getItem("language")
     ? localStorage.getItem("language")
@@ -61,8 +65,35 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
     window.location.href = `${siteUrl}/${language}/${prevSlug}`;
   };
 
+  function handleWheel(e) {
+    if (e.deltaY > 0 && (slideindex < slides.length-1)) {
+      goToNextSlide();
+    }
+    if (e.deltaY < 0 && slideindex>0) {
+      goToPrevSlide();
+    }
+  }
+
+  function handleKeyPress(e) {
+    if(e.key == 'ArrowDown' && (slideindex < slides.length-1)){
+      goToNextSlide();
+    }else if(e.key == 'ArrowUp' && (slideindex > 0)){
+      goToPrevSlide();
+    }
+  }
+
+  function handleScroll(e) {
+    const pathArray = location.pathname.split('/').filter((slug) => slug);
+    const currentSlug = pathArray[pathArray.length - 1];
+    const currentSlide = slides.filter(
+      (slide) => slide.slug === currentSlug
+    )[0];
+    console.log(e);
+  }
+
   return (
-    <>
+    <div onWheel={debounce(handleWheel, 100)} onKeyDown={handleKeyPress}
+    tabIndex="0">
       <AnnualReportMenu
         toggleMenu={toggleMenu}
         isOpen={isOpen}
@@ -70,6 +101,7 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
         language={language}
         slides={slides}
         slideindex={slideindex}
+        lightBackgroundSlugs={lightBackgroundSlugs}
       />
       {isOpen ? (
         <TableOfContents rootUrl={rootUrl} slide={slides[0]} slides={slides} />
@@ -82,26 +114,35 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
               direction={"vertical"}
               spaceBetween={30}
               centeredSlides={true}
+              keyboard={{ enabled: true }}
+              onKeyPress={function (swiper, keyCode){
+                  if(keyCode == 40 && (slideindex < slides.length-1)){
+                    goToNextSlide();
+                  }else if(keyCode == 38 && (slideindex > 0)){
+                    goToPrevSlide();
+                  }
+                }
+              }
               pagination={{
                 clickable: true,
                 type: "custom",
                 paginationElement: "div",
                 renderCustom: function (swiper, current, total) {
                   
-                  var text = `<ul class="dot-nav show-for-large${slides[slideindex].type == 'messageslidepage' ? ' light-background' : ''}">`;
-                  if(slideindex > 0){
+                  var text = `<ul class="dot-nav show-for-large${ lightBackgroundSlugs.indexOf(slides[slideindex].type)>-1 ? ' light-background' : ''}">`;
+                  if(slideindex >= 0){
                     text += `<li class="link-item">
                                     <div class="dot-nav-tooltip">
                                         <span>Home</span>
                                     </div>
-                                    <a href="${rootUrl}" onClick={setActiveTab} class="ember-view link-dot">
+                                    <a href="${rootUrl}" onClick={setActiveTab} class="link-dot">
                                         <div class="dot-circle"></div>
                                     </a>
                                 </li>`;
                   }
                   
                   for (let i = 0; i <= total - 1; i++) {
-                    if(slideindex > 0){
+                    if(slideindex >= 0){
                       if (current-1 == i) {
                         text += `<li class="link-item"><div class="dot-nav-tooltip"><span>${slides[i].value.title}</span></div><div class="current-page"><div class="dot-circle"></div></div></li>`;
                       } else {
@@ -109,7 +150,7 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
                                       <div class="dot-nav-tooltip">
                                           <span>${slides[i].value.title}</span>
                                       </div>
-                                      <a href="${rootUrl}/${slides[i].value.slug}" onClick={setActiveTab} class="ember-view link-dot">
+                                      <a href="${rootUrl}/${slides[i].value.slug}" onClick={setActiveTab} class="link-dot">
                                           <div class="dot-circle"></div>
                                       </a>
                                   </li>`;
@@ -126,7 +167,7 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
               {slides.map(function (slide, index) {
                 return (
                   <SwiperSlide>
-                    <Slide rootUrl={rootUrl} slide={slide} slides={slides} />
+                    <Slide rootUrl={rootUrl} slide={slide} slides={slides} goToNextSlide={goToNextSlide} goToPrevSlide={goToPrevSlide} />
                   </SwiperSlide>
                 );
               })}
@@ -136,23 +177,23 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
           )}
           {slideindex >= 0 ? (
             <button
-              className={"scroll-arrow scroll-arrow-up-btn" + (slideindex >= 0 && slides[slideindex].type == 'messageslidepage' ? ' light-background' : '')}
+              className={"scroll-arrow scroll-arrow-up-btn" + (slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type)>-1 ? ' light-background' : '')}
               type="button"
               onClick={goToPrevSlide}
             ></button>
           ) : (
             ""
           )}
-
+          {slideindex != slides.length-1 ? (
           <button
-            className={"scroll-arrow scroll-arrow-down-btn scroll-arrow-after-content" + (slideindex >= 0 && slides[slideindex].type == 'messageslidepage' ? ' light-background' : '')}
+            className={"scroll-arrow scroll-arrow-down-btn scroll-arrow-after-content" + (slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type)>-1 ? ' light-background' : '')}
             onClick={goToNextSlide}
             type="button"
-          ></button>
-          <p class={"vertical-title" + (slideindex >= 0 && slides[slideindex].type == 'messageslidepage' ? ' light-background' : '')}>2020 Annual Report</p>
+          ></button>) : ("")}
+          <p className={"vertical-title" + (slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type)>-1 ? ' light-background' : '')}>2020 Annual Report</p>
         </>
       )}
-    </>
+    </div>
   );
 };
 export default AnnualReportPage;

@@ -10,6 +10,7 @@ const AnnualReportMenu = ({
   language,
   slides,
   slideindex,
+  lightBackgroundSlugs
 }) => {
   const history = useHistory();
 
@@ -31,7 +32,7 @@ const AnnualReportMenu = ({
 
   return (
     <MenuPortal>
-      <div className={"cigi-top-bar" + (slideindex >= 0 && slides[slideindex].type == 'messageslidepage' ? ' light-background' : '')} style={{ opacity: 1 }}>
+      <div className={"cigi-top-bar" + (slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type)>-1 ? ' light-background' : '')} style={{ opacity: 1 }}>
         <div className="cigi-logo">
           <a href="https://www.cigionline.org">
             <svg
@@ -68,7 +69,7 @@ const AnnualReportMenu = ({
               <span>/</span>
               <a
                 href="#"
-                className="ember-view intl-link"
+                className="intl-link"
                 onClick={setLanguage}
               >
                 FR
@@ -78,7 +79,7 @@ const AnnualReportMenu = ({
             <>
               <a
                 href="#"
-                className="ember-view intl-link"
+                className="intl-link"
                 onClick={setLanguage}
               >
                 EN
@@ -101,8 +102,7 @@ const AnnualReportMenu = ({
                 aria-hidden="true"
                 data-icon="times"
                 data-prefix="fal"
-                id="ember1250"
-                class="svg-inline--fa fa-times fa-w-10 fa-lg ember-view"
+                class="svg-inline--fa fa-times fa-w-10 fa-lg"
               >
                 <path
                   fill="currentColor"
@@ -118,8 +118,7 @@ const AnnualReportMenu = ({
                 aria-hidden="true"
                 data-icon="bars"
                 data-prefix="fal"
-                id="ember1048"
-                className="svg-inline--fa fa-bars fa-w-14 fa-lg ember-view"
+                className="svg-inline--fa fa-bars fa-w-14 fa-lg"
               >
                 <path
                   fill="currentColor"
