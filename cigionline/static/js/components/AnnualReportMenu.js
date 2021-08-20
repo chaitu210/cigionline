@@ -1,26 +1,21 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import PropTypes from "prop-types";
-import MenuPortal from "./MenuPortal";
+import React from 'react';
+import MenuPortal from './MenuPortal';
 import {
   language,
   siteUrl,
-  currentSlug,
-  lightBackgroundSlugs,
-} from "./AnnualReportConstants";
+  lightBackgroundSlugs
+} from './AnnualReportConstants';
 
 const AnnualReportMenu = ({
   toggleMenu,
   isOpen,
   otherLangSlug,
   slides,
-  slideindex,
-  lightBackgroundSlugs
+  slideindex
 }) => {
-  const history = useHistory();
 
-  const setLanguage = (e) => {
-    if (language == "en") {
+  const setLanguage = () => {
+    if (language == 'en') {
       window.location.href = `${siteUrl}/fr/${otherLangSlug}`;
     } else {
       window.location.href = `${siteUrl}/en/${otherLangSlug}`;

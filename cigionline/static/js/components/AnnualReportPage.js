@@ -96,7 +96,6 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
         otherLangSlug={otherLangSlug}
         slides={slides}
         slideindex={slideindex}
-        lightBackgroundSlugs={lightBackgroundSlugs}
       />
       {isOpen ? (
         <TableOfContents slide={slides[0]} slides={slides} />
