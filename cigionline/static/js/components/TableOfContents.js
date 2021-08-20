@@ -9,13 +9,10 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
   const originUrl = window.location.origin;
   const currentPath = window.location.pathname;
   const params = queryString.parse(window.location.search);
-  const isAcknowledgements =
-    params.acknowledgements === 'true' || params.remerciements === 'true'
-      ? true
-      : false;
+  const isAcknowledgements = !!(params.acknowledgements === 'true' || params.remerciements === 'true');
 
   function loadAcknowledgements() {
-    return slide.value.acknowledgement.groups.map(function (group) {
+    return slide.value.acknowledgement.groups.map(function(group) {
       return (
         <>
           <div className="grid-x credits-content">
@@ -24,7 +21,7 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
             </div>
           </div>
           <div className="grid-x credits-content">
-            {group.value.people.map(function (person) {
+            {group.value.people.map(function(person) {
               return (
                 <div className="cell medium-3 small-4 credits-block">
                   <h5>{person.value.title}</h5>
@@ -35,7 +32,7 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
             })}
           </div>
           <div className="grid-x credits-content credits-border">
-            {group.value.people.map(function (person) {
+            {group.value.people.map(function(person) {
               return (
                 <div className="cell small-4 credits-block show-for-small-only">
                   <h5>{person.value.title}</h5>
@@ -51,15 +48,14 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
   }
 
   function firstHalfSlides() {
-    let slidesExceptTOC = slides.filter(function (iterslide) {
+    const slidesExceptTOC = slides.filter(function(iterslide) {
       return iterslide.value.slug !== slide.value.slug;
     });
-    const firstHalf =
-      (slidesExceptTOC.length - 1) % 2 === 0
-        ? slidesExceptTOC.length / 2
-        : slidesExceptTOC.length / 2 + 1;
-    return slidesExceptTOC.map(function (slideIter, index) {
-      const hrefUrl = siteUrl + '/' + language + '/' + slideIter.value.slug + '/';
+    const firstHalf = (slidesExceptTOC.length - 1) % 2 === 0
+      ? slidesExceptTOC.length / 2
+      : slidesExceptTOC.length / 2 + 1;
+    return slidesExceptTOC.map(function(slideIter, index) {
+      const hrefUrl = `${siteUrl}/${language}/${slideIter.value.slug}/`;
       return index < firstHalf ? (
         <div className="grid-x slide-link">
           <div className="cell small-1 medium-1">
@@ -76,15 +72,14 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
   }
 
   function secondHalfSlides() {
-    let slidesExceptTOC = slides.filter(function (iterslide) {
+    const slidesExceptTOC = slides.filter(function(iterslide) {
       return iterslide.value.slug !== slide.value.slug;
     });
-    const firstHalf =
-      (slidesExceptTOC.length - 1) % 2 === 0
-        ? slidesExceptTOC.length / 2
-        : slidesExceptTOC.length / 2 + 1;
-    return slidesExceptTOC.map(function (slideIter, index) {
-      const hrefUrl = siteUrl + '/' + language + '/' + slideIter.value.slug + '/';
+    const firstHalf = (slidesExceptTOC.length - 1) % 2 === 0
+      ? slidesExceptTOC.length / 2
+      : slidesExceptTOC.length / 2 + 1;
+    return slidesExceptTOC.map(function(slideIter, index) {
+      const hrefUrl = `${siteUrl}/${language}/${slideIter.value.slug}/`;
       return index > firstHalf ? (
         <div className="grid-x slide-link">
           <div className="cell small-1 medium-1">

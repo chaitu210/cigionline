@@ -7,10 +7,10 @@ const Quote = ({ slide, contentOpacity }) => {
   return (
     <div
       className={
-        'background-row show-for-medium' +
-        (lightBackgroundSlugs.indexOf(slide.type) > -1
-          ? ' background-white'
-          : '')
+        `background-row show-for-medium${
+          lightBackgroundSlugs.indexOf(slide.type) > -1
+            ? ' background-white'
+            : ''}`
       }
       style={{}}
     >

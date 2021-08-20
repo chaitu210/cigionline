@@ -1,60 +1,54 @@
-import React, { useRef, useState, useEffect } from "react";
-import { debounce } from "lodash";
-// Import Swiper React components
-import { Swiper, SwiperSlide } from "swiper/react";
-import { render } from "react-dom";
-import {
-  BrowserRouter as Router,
-  Route,
-  withRouter,
-  useLocation,
-  Link,
-} from "react-router-dom";
-import { useHistory } from "react-router-dom";
-import AnnualReportMenu from "./AnnualReportMenu";
-import TableOfContents from "./TableOfContents";
+import React, { useState } from 'react';
+import { debounce } from 'lodash';
+import AnnualReportMenu from './AnnualReportMenu';
 import {
   language,
   siteUrl,
-  currentSlug,
   lightBackgroundSlugs,
-} from "./AnnualReportConstants";
-import HomeSlide from "./HomeSlide";
+} from './AnnualReportConstants';
+import HomeSlide from './HomeSlide';
+import Quote from './Quote';
+import Footer from './Footer';
 
-// Import Swiper styles
+import Slide from './Slide';
 
-import Slide from "./Slide";
-
-// import Swiper core and required modules
-import SwiperCore, {
-  Autoplay,
-  Pagination,
-  Navigation,
-  Keyboard,
-} from "swiper/core";
-
-// install Swiper modules
-SwiperCore.use([Autoplay, Pagination, Navigation, Keyboard]);
-
-const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
+const AnnualReportPage = ({
+  slides, slideindex, otherLangSlug, year,
+}) => {
+  const [touchStart, setTouchStart] = useState(NaN);
+  const [touchEnd, setTouchEnd] = useState(NaN);
   const [isOpen, setIsOpen] = useState(false);
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const [contentOpacity, updatecontentOpacity] = useState(true);
+  const [socialIcons, updatesocialIcons] = useState(true);
 
-  const setActiveTab = (e) => {
-    e.preventDefault();
-    this.context.router.push(e.target.href);
+  const changeStyle = () => {
+    if (contentOpacity) {
+      updatecontentOpacity(false);
+    } else {
+      updatecontentOpacity(true);
+    }
   };
 
-  const goToNextSlide = (e) => {
-    const nextSlug = slides[slideindex + 1]["value"]["slug"];
+  const changeSocialStyle = () => {
+    if (socialIcons) {
+      updatesocialIcons(false);
+    } else {
+      updatesocialIcons(true);
+    }
+  };
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  const goToNextSlide = () => {
+    const nextSlug = slides[slideindex + 1].value.slug;
     window.location.href = `${siteUrl}/${language}/${nextSlug}`;
   };
 
-  const goToPrevSlide = (e) => {
-    if (slideindex == 0) {
+  const goToPrevSlide = () => {
+    if (slideindex === 0) {
       window.location.href = `${siteUrl}/${language}/`;
     }
-    const prevSlug = slides[slideindex - 1]["value"]["slug"];
+    const prevSlug = slides[slideindex - 1].value.slug;
     window.location.href = `${siteUrl}/${language}/${prevSlug}`;
   };
 
@@ -68,27 +62,43 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
   }
 
   function handleKeyPress(e) {
-    if (e.key == "ArrowDown" && slideindex < slides.length - 1) {
+    if (e.key === 'ArrowDown' && slideindex < slides.length - 1) {
       goToNextSlide();
-    } else if (e.key == "ArrowUp" && slideindex > 0) {
+    } else if (e.key === 'ArrowUp' && slideindex > 0) {
       goToPrevSlide();
     }
   }
 
-  function handleScroll(e) {
-    const pathArray = location.pathname.split("/").filter((slug) => slug);
-    const currentSlug = pathArray[pathArray.length - 1];
-    const currentSlide = slides.filter(
-      (slide) => slide.slug === currentSlug
-    )[0];
-    console.log(e);
+  function handleTouchStart(e) {
+    setTouchStart(e.targetTouches[0].clientY);
+  }
+
+  function handleTouchMove(e) {
+    setTouchEnd(e.targetTouches[0].clientY);
+  }
+
+  function handleTouchEnd() {
+    const touchDiff = touchStart - touchEnd;
+    if (touchDiff > 150 && slides[slideindex].next_slide) {
+      goToNextSlide();
+    }
+
+    if (touchDiff < -150 && slides[slideindex].prev_slide) {
+      goToPrevSlide();
+    }
+    setTouchStart(NaN);
+    setTouchEnd(NaN);
   }
 
   return (
     <div
       onWheel={debounce(handleWheel, 100)}
       onKeyDown={handleKeyPress}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       tabIndex="0"
+      role="button"
     >
       <AnnualReportMenu
         toggleMenu={toggleMenu}
@@ -97,128 +107,134 @@ const AnnualReportPage = ({ slides, slideindex, otherLangSlug, year }) => {
         slides={slides}
         slideindex={slideindex}
       />
-      {isOpen ? (
-        <TableOfContents slide={slides[0]} slides={slides} />
-      ) : (
-        <>
-          {slideindex >= 0 ? (
-            <Swiper
-              rebuildOnUpdate={true}
-              initialSlide={slideindex}
-              direction={"vertical"}
-              spaceBetween={30}
-              centeredSlides={true}
-              keyboard={{ enabled: true }}
-              onKeyPress={function (swiper, keyCode) {
-                if (keyCode == 40 && slideindex < slides.length - 1) {
-                  goToNextSlide();
-                } else if (keyCode == 38 && slideindex > 0) {
-                  goToPrevSlide();
-                }
-              }}
-              pagination={{
-                clickable: true,
-                type: "custom",
-                paginationElement: "div",
-                renderCustom: function (swiper, current, total) {
-                  var text = `<ul class="dot-nav show-for-large${
-                    lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1
-                      ? " light-background"
-                      : ""
-                  }">`;
-                  if (slideindex >= 0) {
-                    text += `<li class="link-item">
-                                    <div class="dot-nav-tooltip">
-                                        <span>Home</span>
-                                    </div>
-                                    <a href="${siteUrl}/${language}" onClick={setActiveTab} class="link-dot">
-                                        <div class="dot-circle"></div>
-                                    </a>
-                                </li>`;
-                  }
+      <>
+        <div className="liquid-container">
+          <div className="liquid-child" style={{ top: 0, left: 0, opacity: 1 }}>
+            {slideindex >= 0 && (
+              <Quote
+                slide={isOpen ? slides[0] : slides[slideindex]}
+                contentOpacity={contentOpacity}
+              />
+            )}
 
-                  for (let i = 0; i <= total - 1; i++) {
-                    if (slideindex >= 0) {
-                      if (current - 1 == i) {
-                        text += `<li class="link-item"><div class="dot-nav-tooltip"><span>${slides[i].value.title}</span></div><div class="current-page"><div class="dot-circle"></div></div></li>`;
-                      } else {
-                        text += `<li class="link-item">
-                                      <div class="dot-nav-tooltip">
-                                          <span>${slides[i].value.title}</span>
-                                      </div>
-                                      <a href="${siteUrl}/${language}/${slides[i].value.slug}" onClick={setActiveTab} class="link-dot">
-                                          <div class="dot-circle"></div>
-                                      </a>
-                                  </li>`;
-                      }
-                    }
-                  }
-                  text += "</ul>";
-                  return text;
-                },
-              }}
-              navigation={false}
-              className="mySwiper"
-            >
-              {slides.map(function (slide, index) {
-                return (
-                  <SwiperSlide>
-                    <Slide
-                      slide={slide}
-                      slides={slides}
-                      goToNextSlide={goToNextSlide}
-                      goToPrevSlide={goToPrevSlide}
-                    />
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          ) : (
-            <HomeSlide year={year} />
-          )}
-          {slideindex >= 0 ? (
-            <button
-              className={
-                "scroll-arrow scroll-arrow-up-btn" +
-                (slideindex >= 0 &&
-                lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1
-                  ? " light-background"
-                  : "")
-              }
-              type="button"
-              onClick={goToPrevSlide}
-            ></button>
-          ) : (
-            ""
-          )}
-          {slideindex != slides.length - 1 ? (
-            <button
-              className={
-                "scroll-arrow scroll-arrow-down-btn scroll-arrow-after-content" +
-                (slideindex >= 0 &&
-                lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1
-                  ? " light-background"
-                  : "")
-              }
-              onClick={goToNextSlide}
-              type="button"
-            ></button>
-          ) : (
-            ""
-          )}
-          <p
-            className={
-              "vertical-title" +
-              (slideindex >= 0 &&
+            {slideindex >= 0 ? (
+              <Slide
+                slide={isOpen ? slides[0] : slides[slideindex]}
+                slides={slides}
+                contentOpacity={contentOpacity}
+              />
+            ) : (
+              <HomeSlide year={year} />
+            )}
+            {slideindex >= 0 && (
+              <Footer
+                slide={isOpen ? slides[0] : slides[slideindex]}
+                socialIcons={socialIcons}
+                contentOpacity={contentOpacity}
+                changeStyle={changeStyle}
+                changeSocialStyle={changeSocialStyle}
+              />
+            )}
+          </div>
+        </div>
+        {!isOpen ? (
+          <>
+            {slideindex >= 0 ? (
+              <ul
+                className={`dot-nav show-for-large 
+              ${
               lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1
-                ? " light-background"
-                : "")
-            }
-          >
-            2020 Annual Report
-          </p>
-        </>
-      )}
+                ? ' light-background'
+                : ''
+              }
+            `}
+              >
+                {slideindex >= 0 ? (
+                  <li className="link-item">
+                    <div className="dot-nav-tooltip">
+                      <span>Home</span>
+                    </div>
+                    <a href={`${siteUrl}/${language}`} className="link-dot">
+                      <div className="dot-circle" />
+                    </a>
+                  </li>
+                ) : (
+                  ''
+                )}
+                {slides.map(function(slide, index) {
+                  return slideindex === index ? (
+                    <li className="link-item">
+                      <div className="dot-nav-tooltip">
+                        <span>{slide.value.title}</span>
+                      </div>
+                      <div className="current-page">
+                        <div className="dot-circle" />
+                      </div>
+                    </li>
+                  ) : (
+                    <li className="link-item">
+                      <div className="dot-nav-tooltip">
+                        <span>{slide.value.title}</span>
+                      </div>
+                      <a
+                        href={`${siteUrl}/${language}/${slide.value.slug}`}
+                        className="link-dot"
+                      >
+                        <div className="dot-circle" />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              ''
+            )}
+
+            {slideindex >= 0 ? (
+              // eslint-disable-next-line react/button-has-type
+              <button
+                className={`scroll-arrow scroll-arrow-up-btn${
+                  slideindex >= 0
+                  && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1
+                    ? ' light-background'
+                    : ''
+                }`}
+                aria-label="Prev"
+                onClick={goToPrevSlide}
+              />
+            ) : (
+              ''
+            )}
+            {slideindex !== slides.length - 1 ? (
+              // eslint-disable-next-line react/button-has-type
+              <button
+                className={`scroll-arrow scroll-arrow-down-btn scroll-arrow-after-content${
+                  slideindex >= 0
+                  && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1
+                    ? ' light-background'
+                    : ''
+                }`}
+                aria-label="Next"
+                onClick={goToNextSlide}
+              />
+            ) : (
+              ''
+            )}
+            <p
+              className={`vertical-title${
+                slideindex >= 0
+                && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1
+                  ? ' light-background'
+                  : ''
+              }`}
+            >
+              2020 Annual Report
+            </p>
+          </>
+        ) : (
+          ''
+        )}
+      </>
     </div>
   );
 };

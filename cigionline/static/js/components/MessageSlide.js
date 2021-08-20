@@ -1,25 +1,24 @@
-import React, { useState } from "react";
-import Footer from "./Footer";
+import React from 'react';
 
 const MessageSlide = ({ slide, contentOpacity }) => {
   function firstHalfBody() {
     const half = Math.ceil(slide.value.body.length / 2);
     const firstHalf = slide.value.body.slice(0, half);
     return firstHalf
-      .map(function (paragraph, index) {
+      .map(function(paragraph) {
         return paragraph.value;
       })
-      .join("");
+      .join('');
   }
 
   function secondHalfBody() {
     const half = Math.ceil(slide.value.body.length / 2);
     const secondHalf = slide.value.body.slice(-half);
     return secondHalf
-      .map(function (paragraph, index) {
+      .map(function(paragraph) {
         return paragraph.value;
       })
-      .join("");
+      .join('');
   }
 
   return (
@@ -34,14 +33,14 @@ const MessageSlide = ({ slide, contentOpacity }) => {
           <div
             className="cell medium-6 hover-reveal-hide"
             dangerouslySetInnerHTML={{ __html: firstHalfBody() }}
-          ></div>
+          />
           <div
             className="cell medium-6 hover-reveal-hide"
             dangerouslySetInnerHTML={{ __html: secondHalfBody() }}
-          ></div>
-          <div className="cell medium-6 hover-reveal-hide"></div>
+          />
+          <div className="cell medium-6 hover-reveal-hide" />
           <div className="cell medium-6 hover-reveal-hide">
-            <div className="cigi-red-line"></div>
+            <div className="cigi-red-line" />
             <p className="chair-name">
               <b>{slide.value.author.title}</b>
               <br />

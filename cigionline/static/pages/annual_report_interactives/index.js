@@ -17,34 +17,32 @@ let translationKey = '';
 let otherLangSlug = '';
 
 window.annualReport = JSON.parse(
-  document.getElementById('annual-report-json').textContent
+  document.getElementById('annual-report-json').textContent,
 );
 
 const annualReport = JSON.parse(
-  document.getElementById('annual-report-json').textContent
+  document.getElementById('annual-report-json').textContent,
 );
 
-const slides = annualReport.value.language.slides;
-const year = annualReport.value.language.year;
+const slides = annualReport.value[language].slides;
+const year = annualReport.value[language].year;
 const otherLangSlides = language === 'en'
   ? annualReport.value.fr.slides
   : annualReport.value.en.slides;
 
-slides.forEach(function (slide, index) {
+slides.forEach(function(slide, index) {
   if (currentSlug === '') {
     if (slide.value.slug === currentSlug) {
       slideIndex = index;
       translationKey = slide.translation_key;
     }
-  } else {
-    if (slide.value.slug.indexOf(currentSlug) > -1) {
-      slideIndex = index;
-      translationKey = slide.translation_key;
-    }
+  } else if (slide.value.slug.indexOf(currentSlug) > -1) {
+    slideIndex = index;
+    translationKey = slide.translation_key;
   }
 });
 
-otherLangSlides.forEach(function(slide){
+otherLangSlides.forEach(function(slide) {
   if (slide.translation_key === translationKey) {
     otherLangSlug = slide.value.slug;
   }
@@ -59,5 +57,5 @@ ReactDOM.render(
       year={year}
     />
   </Router>,
-  document.getElementById('annual-report-interactives')
+  document.getElementById('annual-report-interactives'),
 );
