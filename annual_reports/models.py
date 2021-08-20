@@ -1,35 +1,23 @@
 from django.conf import settings
-from django.utils import translation
-from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtailmedia.edit_handlers import MediaChooserPanel
-
-from core.models import (
-    BasicPageAbstract,
-    FeatureablePageAbstract,
-    SearchablePageAbstract, ShareablePageAbstract,
-)
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    MultiFieldPanel,
-    StreamFieldPanel,
-    PageChooserPanel
-)
+from django.shortcuts import redirect
+from django.utils import translation
+from wagtail.admin.edit_handlers import (FieldPanel, MultiFieldPanel,
+                                         PageChooserPanel, StreamFieldPanel)
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import StreamField
-from wagtail.core.models import Page, Orderable
+from wagtail.core.models import Orderable, Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtailmedia.edit_handlers import MediaChooserPanel
 
-from streams.blocks import (
-    SlideQuoteBlock,
-    PersonBlock,
-    ParagraphBlock,
-    SlideLinkBlock,
-    SlideAcknowledgedGroupBlock,
-    SlideTabBlock,
-)
+from core.models import (BasicPageAbstract, FeatureablePageAbstract,
+                         SearchablePageAbstract, ShareablePageAbstract)
+from streams.blocks import (ParagraphBlock, PersonBlock,
+                            SlideAcknowledgedGroupBlock, SlideLinkBlock,
+                            SlideQuoteBlock, SlideTabBlock)
 
 
 class AnnualReportListPage(BasicPageAbstract, Page):
@@ -185,6 +173,11 @@ class AnnualReportPage(RoutablePageMixin, FeatureablePageAbstract, Page, Searcha
             "type": self._meta.model_name,
             "value": localized_reports
         }
+
+    @route(r'^interactives/$')
+    def interactives_index(self, request):
+        url = self.get_url(current_site=self.get_site()) + self.reverse_subpage('interactives', args=('en', ))
+        return redirect(url)
 
     @route(r'^interactives/(?P<locale>[\w-]+)/$')
     @route(r'^interactives/(?P<locale>[\w-]+)/(?P<slug>[\w-]+)/$')
