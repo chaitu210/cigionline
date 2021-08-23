@@ -1,1 +1,2 @@
-export const lightBackgroundSlugs = ['messageslidepage', 'tabbedslidepage', 'outputsandactivitiesslidepage']; // eslint-disable-line import/prefer-default-export
+export const lightBackgroundSlugs = ['messageslidepage', 'tabbedslidepage', 'outputsandactivitiesslidepage'];
+export const backgroundLessSlideTypes = ['messageslidepage', 'summaryslidepage'];

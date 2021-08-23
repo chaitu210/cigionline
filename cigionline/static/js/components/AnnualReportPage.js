@@ -23,7 +23,7 @@ const AnnualReportPage = ({
   const [isOpen, setIsOpen] = useState(false);
   const [contentOpacity, updatecontentOpacity] = useState(true);
   const [socialIcons, updatesocialIcons] = useState(true);
-  const [slideindex, setSlideIndex] = useState(-1);
+  const [slideindex, setSlideIndex] = useState(NaN);
   const [language, setLanguage] = useState(getLanguage());
 
   const siteUrl = getSiteUrl();
@@ -39,24 +39,22 @@ const AnnualReportPage = ({
     ? annualReport.value.fr.slides
     : annualReport.value.en.slides;
 
-  // eslint-disable-next-line array-callback-return, consistent-return
-  slides.some(function(slide, index) {
-    if (currentSlug === '') {
-      if (slide.value.slug === currentSlug) {
-        if (slideindex === -1) {
-          setSlideIndex(index);
-        }
-        translationKey = slide.translation_key;
+  if (isNaN(slideindex)) {
+    // eslint-disable-next-line array-callback-return, consistent-return
+    slides.some(function(slide, index) {
+      if (currentSlug === '') {
+        setSlideIndex(-1);
+        return false;
+      } if (slide.value.slug.indexOf(currentSlug) > -1) {
+        setSlideIndex(index);
         return false;
       }
-    } else if (slide.value.slug.indexOf(currentSlug) > -1) {
-      if (slideindex === -1) {
-        setSlideIndex(index);
-      }
-      translationKey = slide.translation_key;
-      return false;
-    }
-  });
+    });
+  }
+
+  if (slideindex > -1) {
+    translationKey = slides[slideindex].translation_key;
+  }
 
   otherLangSlides.forEach(function(slide) {
     if (slide.translation_key === translationKey) {
@@ -86,33 +84,35 @@ const AnnualReportPage = ({
     e.preventDefault();
     if (language === 'en') {
       setLanguage('fr');
-      window.history.pushState({}, '', `${siteUrl}/fr/${otherLangSlug}`);
+      window.history.pushState({}, '', `${siteUrl}/fr/${otherLangSlug}/`);
     } else {
       setLanguage('en');
-      window.history.pushState({}, '', `${siteUrl}/en/${otherLangSlug}`);
+      window.history.pushState({}, '', `${siteUrl}/en/${otherLangSlug}/`);
     }
   };
 
   const goToNextSlide = () => {
     const nextSlug = slides[slideindex + 1].value.slug;
     setSlideIndex(slideindex + 1);
-    window.history.pushState({}, '', `${siteUrl}/${language}/${nextSlug}`);
+    window.history.pushState({}, '', `${siteUrl}/${language}/${nextSlug}/`);
   };
 
   const goToPrevSlide = () => {
     if (slideindex === 0) {
-      window.location.href = `${siteUrl}/${language}/`;
+      setSlideIndex(slideindex - 1);
+      window.history.pushState({}, '', `${siteUrl}/${language}/`);
+    } else {
+      const prevSlug = slides[slideindex - 1].value.slug;
+      setSlideIndex(slideindex - 1);
+      window.history.pushState({}, '', `${siteUrl}/${language}/${prevSlug}/`);
     }
-    const prevSlug = slides[slideindex - 1].value.slug;
-    setSlideIndex(slideindex - 1);
-    window.history.pushState({}, '', `${siteUrl}/${language}/${prevSlug}`);
   };
 
   function handleWheel(e) {
     if (e.deltaY > 0 && slideindex < slides.length - 1) {
       goToNextSlide();
     }
-    if (e.deltaY < 0 && slideindex > 0) {
+    if (e.deltaY < 0 && slideindex >= 0) {
       goToPrevSlide();
     }
   }
@@ -145,6 +145,7 @@ const AnnualReportPage = ({
     setTouchStart(NaN);
     setTouchEnd(NaN);
   }
+  console.log(isOpen, 'isOpen');
 
   return (
     <div
@@ -164,7 +165,7 @@ const AnnualReportPage = ({
         setLanguage={setLanguageCode}
       />
       <>
-        <div className="liquid-container">
+        <div className="liquid-container" style={isOpen ? { height: '100vh' } : {}}>
           <div className="liquid-child" style={{ top: 0, left: 0, opacity: 1 }}>
             {slideindex >= 0 && (
               <Quote
@@ -177,10 +178,18 @@ const AnnualReportPage = ({
               <Slide
                 slide={isOpen ? slides[0] : slides[slideindex]}
                 slides={slides}
+                isOpen={isOpen}
                 contentOpacity={contentOpacity}
               />
             ) : (
-              <HomeSlide year={year} />
+              isOpen ? (
+                <Slide
+                  slide={slides[0]}
+                  slides={slides}
+                  isOpen={isOpen}
+                  contentOpacity={contentOpacity}
+                />
+              ) : <HomeSlide year={year} />
             )}
             {slideindex >= 0 && (
               <Footer
@@ -284,7 +293,7 @@ const AnnualReportPage = ({
                   : ''
               }`}
             >
-              2020 Annual Report
+              {window.annualReport.value[language].title}
             </p>
           </>
         ) : (

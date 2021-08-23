@@ -9,7 +9,7 @@ import Financials from './Financials';
 import Timeline from './Timeline';
 
 const Slide = ({
-  slide, slides, contentOpacity,
+  slide, slides, isOpen, contentOpacity,
 }) => {
   const getComponent = () => {
     if (slide.type === '') {
@@ -19,6 +19,7 @@ const Slide = ({
         <TableOfContents
           slide={slide}
           slides={slides}
+          isOpen={isOpen}
           contentOpacity={contentOpacity}
         />
       );

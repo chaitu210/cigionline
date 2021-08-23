@@ -18,7 +18,7 @@ const AnnualReportMenu = ({
 
   return (
     <MenuPortal>
-      <div className={`cigi-top-bar${slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1 ? ' light-background' : ''}`} style={{ opacity: 1 }}>
+      <div className={`cigi-top-bar${!isOpen ? (slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1 ? ' light-background' : '') : ''}`} style={{ opacity: 1 }}>
         <div className="cigi-logo">
           <a href="https://www.cigionline.org">
             <svg

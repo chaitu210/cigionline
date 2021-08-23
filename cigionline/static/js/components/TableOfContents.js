@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import queryString from 'query-string';
 import {
   getLanguage,
   getSiteUrl,
 } from './AnnualReportUtils';
 
-const TableOfContents = ({ slide, slides, contentOpacity }) => {
+const TableOfContents = ({
+  slide, slides, isOpen, contentOpacity,
+}) => {
   const originUrl = window.location.origin;
   const currentPath = window.location.pathname;
   const params = queryString.parse(window.location.search);
-  const isAcknowledgements = !!(params.acknowledgements === 'true' || params.remerciements === 'true');
+  const isAcknowledgementsval = !!(params.acknowledgements === 'true' || params.remerciements === 'true');
+  const [isAcknowledgements, setIsAcknowledgements] = useState(isAcknowledgementsval);
   const language = getLanguage();
   const siteUrl = getSiteUrl();
 
@@ -25,7 +28,7 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
           <div className="grid-x credits-content">
             {group.value.people.map(function(person) {
               return (
-                <div className="cell medium-3 small-4 credits-block">
+                <div key={person.id} className="cell medium-3 small-4 credits-block">
                   <h5>{person.value.title}</h5>
                   <h6>{person.value.position}</h6>
                   <div />
@@ -36,7 +39,7 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
           <div className="grid-x credits-content credits-border">
             {group.value.people.map(function(person) {
               return (
-                <div className="cell small-4 credits-block show-for-small-only">
+                <div key={person.id} className="cell small-4 credits-block show-for-small-only">
                   <h5>{person.value.title}</h5>
                   <h6>{person.value.position}</h6>
                   <div />
@@ -108,7 +111,9 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
           style={{ opacity: 1 }}
         >
           <div className="cell">
-            <h1>2021 Annual Report</h1>
+            <h1>
+              {window.annualReport.value[language].title}
+            </h1>
           </div>
         </div>
         <div
@@ -123,6 +128,13 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
                     className="hide-acknowledgements-btn"
                     type="button"
                     href={originUrl + currentPath}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsAcknowledgements(!isAcknowledgements);
+                      if (!isOpen) {
+                        window.history.pushState({}, '', `${originUrl}${currentPath}`);
+                      }
+                    }}
                   >
                     {slide.value.title}
                   </a>
@@ -138,6 +150,13 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
                       className="show-acknowledgements-btn"
                       type="button"
                       href="?acknowledgements=true"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsAcknowledgements(!isAcknowledgements);
+                        if (!isOpen) {
+                          window.history.pushState({}, '', `${originUrl}${currentPath}?acknowledgements=true`);
+                        }
+                      }}
                     >
                       Acknowledgements
                     </a>
@@ -146,6 +165,13 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
                       className="show-acknowledgements-btn"
                       type="button"
                       href="?remerciements=true"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsAcknowledgements(!isAcknowledgements);
+                        if (!isOpen) {
+                          window.history.pushState({}, '', `${originUrl}${currentPath}?remerciements=true`);
+                        }
+                      }}
                     >
                       Remerciements
                     </a>
