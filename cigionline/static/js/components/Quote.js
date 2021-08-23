@@ -1,25 +1,26 @@
 import React from 'react';
-import { lightBackgroundSlugs } from './AnnualReportConstants';
+import { lightBackgroundSlugs, backgroundLessSlideTypes } from './AnnualReportConstants';
 
 const Quote = ({ slide, contentOpacity }) => {
   const originUrl = window.location.origin;
+  let bgImageUrl = (slide.value.background_image?.original || '');
+  if (backgroundLessSlideTypes.includes(slide.type) && contentOpacity) {
+    bgImageUrl = '';
+  }
 
   return (
     <div
       className={
         `background-row show-for-medium${
-          lightBackgroundSlugs.indexOf(slide.type) > -1
+          lightBackgroundSlugs.includes(slide.type)
             ? ' background-white'
             : ''}`
       }
-      style={{}}
     >
       <div
         className="background-image"
         style={{
-          backgroundImage: slide.value.background_image
-            ? `url(${originUrl}${slide.value.background_image.original})`
-            : '',
+          backgroundImage: bgImageUrl ? `url(${originUrl}${bgImageUrl})` : '',
         }}
       >
         <div
@@ -39,7 +40,7 @@ const Quote = ({ slide, contentOpacity }) => {
             />
             <h4
               className="hover-reveal-quote-source"
-              style={{ opacity: contentOpacity ? 0 : 1 }}
+              style={{ visibility: contentOpacity ? 'hidden' : 'visible' }}
               dangerouslySetInnerHTML={{
                 __html: slide.value.quote ? slide.value.quote.subtitle : '',
               }}
@@ -54,10 +55,10 @@ const Quote = ({ slide, contentOpacity }) => {
       <div>
         {slide.value.background_video ? (
           <video
-            playsinline=""
-            autoPlay=""
-            muted=""
-            loop=""
+            playsInline
+            autoPlay
+            muted
+            loop
             id="background-video"
             className="video-background"
           >

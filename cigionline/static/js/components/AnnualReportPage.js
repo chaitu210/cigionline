@@ -228,7 +228,7 @@ const AnnualReportPage = ({
                   : ''
               }`}
             >
-              2020 Annual Report
+              {window.annualReport.value[language].title}
             </p>
           </>
         ) : (

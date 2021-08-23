@@ -23,7 +23,7 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
           <div className="grid-x credits-content">
             {group.value.people.map(function(person) {
               return (
-                <div className="cell medium-3 small-4 credits-block">
+                <div key={person.id} className="cell medium-3 small-4 credits-block">
                   <h5>{person.value.title}</h5>
                   <h6>{person.value.position}</h6>
                   <div />
@@ -34,7 +34,7 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
           <div className="grid-x credits-content credits-border">
             {group.value.people.map(function(person) {
               return (
-                <div className="cell small-4 credits-block show-for-small-only">
+                <div key={person.id} className="cell small-4 credits-block show-for-small-only">
                   <h5>{person.value.title}</h5>
                   <h6>{person.value.position}</h6>
                   <div />
@@ -106,7 +106,9 @@ const TableOfContents = ({ slide, slides, contentOpacity }) => {
           style={{ opacity: 1 }}
         >
           <div className="cell">
-            <h1>2021 Annual Report</h1>
+            <h1>
+              {window.annualReport.value[language].title}
+            </h1>
           </div>
         </div>
         <div

@@ -1,5 +1,6 @@
 const languages = ['en', 'fr'];
 export const lightBackgroundSlugs = ['messageslidepage', 'tabbedslidepage', 'outputsandactivitiesslidepage'];
+export const backgroundLessSlideTypes = ['messageslidepage', 'summaryslidepage'];
 
 export const locationUrl = window.location.href;
 const splitUrl = locationUrl.split('/');
