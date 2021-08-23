@@ -1,15 +1,17 @@
 import React from 'react';
 import queryString from 'query-string';
 import {
-  language,
-  siteUrl,
-} from './AnnualReportConstants';
+  getLanguage,
+  getSiteUrl,
+} from './AnnualReportUtils';
 
 const TableOfContents = ({ slide, slides, contentOpacity }) => {
   const originUrl = window.location.origin;
   const currentPath = window.location.pathname;
   const params = queryString.parse(window.location.search);
   const isAcknowledgements = !!(params.acknowledgements === 'true' || params.remerciements === 'true');
+  const language = getLanguage();
+  const siteUrl = getSiteUrl();
 
   function loadAcknowledgements() {
     return slide.value.acknowledgement.groups.map(function(group) {

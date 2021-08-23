@@ -1,25 +1,20 @@
 import React from 'react';
 import MenuPortal from './MenuPortal';
 import {
-  language,
-  siteUrl,
   lightBackgroundSlugs,
 } from './AnnualReportConstants';
+import {
+  getLanguage,
+} from './AnnualReportUtils';
 
 const AnnualReportMenu = ({
   toggleMenu,
   isOpen,
-  otherLangSlug,
   slides,
   slideindex,
+  setLanguage,
 }) => {
-  const setLanguage = () => {
-    if (language === 'en') {
-      window.location.href = `${siteUrl}/fr/${otherLangSlug}`;
-    } else {
-      window.location.href = `${siteUrl}/en/${otherLangSlug}`;
-    }
-  };
+  const language = getLanguage();
 
   return (
     <MenuPortal>

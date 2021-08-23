@@ -1,5 +1,6 @@
 import React from 'react';
-import { locationUrl, lightBackgroundSlugs } from './AnnualReportConstants';
+import { lightBackgroundSlugs } from './AnnualReportConstants';
+import { getLocationUrl } from './AnnualReportUtils';
 
 const Footer = ({
   slide,
@@ -13,6 +14,8 @@ const Footer = ({
     'timelineslidepage',
     'tabbedslidepage',
   ];
+
+  const locationUrl = getLocationUrl();
 
   return (
     <div

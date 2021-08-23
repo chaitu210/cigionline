@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { debounce } from 'lodash';
 import AnnualReportMenu from './AnnualReportMenu';
 import {
-  language,
-  siteUrl,
   lightBackgroundSlugs,
 } from './AnnualReportConstants';
+import {
+  getLanguage,
+  getSiteUrl,
+  getCurrentSlug,
+} from './AnnualReportUtils';
 import HomeSlide from './HomeSlide';
 import Quote from './Quote';
 import Footer from './Footer';
@@ -13,13 +16,53 @@ import Footer from './Footer';
 import Slide from './Slide';
 
 const AnnualReportPage = ({
-  slides, slideindex, otherLangSlug, year,
+  annualReport,
 }) => {
   const [touchStart, setTouchStart] = useState(NaN);
   const [touchEnd, setTouchEnd] = useState(NaN);
   const [isOpen, setIsOpen] = useState(false);
   const [contentOpacity, updatecontentOpacity] = useState(true);
   const [socialIcons, updatesocialIcons] = useState(true);
+  const [slideindex, setSlideIndex] = useState(-1);
+  const [language, setLanguage] = useState(getLanguage());
+
+  const siteUrl = getSiteUrl();
+  const currentSlug = getCurrentSlug();
+
+  let translationKey = '';
+  let otherLangSlug = '';
+
+  const slides = annualReport.value[language].slides;
+  const year = annualReport.value[language].year;
+
+  const otherLangSlides = language === 'en'
+    ? annualReport.value.fr.slides
+    : annualReport.value.en.slides;
+
+  // eslint-disable-next-line array-callback-return, consistent-return
+  slides.some(function(slide, index) {
+    if (currentSlug === '') {
+      if (slide.value.slug === currentSlug) {
+        if (slideindex === -1) {
+          setSlideIndex(index);
+        }
+        translationKey = slide.translation_key;
+        return false;
+      }
+    } else if (slide.value.slug.indexOf(currentSlug) > -1) {
+      if (slideindex === -1) {
+        setSlideIndex(index);
+      }
+      translationKey = slide.translation_key;
+      return false;
+    }
+  });
+
+  otherLangSlides.forEach(function(slide) {
+    if (slide.translation_key === translationKey) {
+      otherLangSlug = slide.value.slug;
+    }
+  });
 
   const changeStyle = () => {
     if (contentOpacity) {
@@ -39,9 +82,21 @@ const AnnualReportPage = ({
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
+  const setLanguageCode = (e) => {
+    e.preventDefault();
+    if (language === 'en') {
+      setLanguage('fr');
+      window.history.pushState({}, '', `${siteUrl}/fr/${otherLangSlug}`);
+    } else {
+      setLanguage('en');
+      window.history.pushState({}, '', `${siteUrl}/en/${otherLangSlug}`);
+    }
+  };
+
   const goToNextSlide = () => {
     const nextSlug = slides[slideindex + 1].value.slug;
-    window.location.href = `${siteUrl}/${language}/${nextSlug}`;
+    setSlideIndex(slideindex + 1);
+    window.history.pushState({}, '', `${siteUrl}/${language}/${nextSlug}`);
   };
 
   const goToPrevSlide = () => {
@@ -49,7 +104,8 @@ const AnnualReportPage = ({
       window.location.href = `${siteUrl}/${language}/`;
     }
     const prevSlug = slides[slideindex - 1].value.slug;
-    window.location.href = `${siteUrl}/${language}/${prevSlug}`;
+    setSlideIndex(slideindex - 1);
+    window.history.pushState({}, '', `${siteUrl}/${language}/${prevSlug}`);
   };
 
   function handleWheel(e) {
@@ -103,9 +159,9 @@ const AnnualReportPage = ({
       <AnnualReportMenu
         toggleMenu={toggleMenu}
         isOpen={isOpen}
-        otherLangSlug={otherLangSlug}
         slides={slides}
         slideindex={slideindex}
+        setLanguage={setLanguageCode}
       />
       <>
         <div className="liquid-container">
