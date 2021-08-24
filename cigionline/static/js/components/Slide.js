@@ -9,7 +9,7 @@ import Financials from './Financials';
 import Timeline from './Timeline';
 
 const Slide = ({
-  slide, slides, isOpen, contentOpacity, navigateToSlide,
+  slide, slides, contentOpacity, navigateToSlide, isOpen,
 }) => {
   const getComponent = () => {
     if (slide.type === '') {

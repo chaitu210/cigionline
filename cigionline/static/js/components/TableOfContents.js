@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import React, { Fragment, useState } from 'react';
 import queryString from 'query-string';
 import {

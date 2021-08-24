@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { debounce } from 'lodash';
-import {
-  isMobile
-} from "react-device-detect";
-import MobileDetect from 'mobile-detect'
+import MobileDetect from 'mobile-detect';
 import AnnualReportMenu from './AnnualReportMenu';
 import {
   lightBackgroundSlugs,
@@ -27,7 +24,7 @@ const AnnualReportPage = ({
   const [isOpen, setIsOpen] = useState(false);
   const [contentOpacity, updatecontentOpacity] = useState(true);
   const [socialIcons, updatesocialIcons] = useState(true);
-  const [slideindex, setSlideIndex] = useState(NaN);
+  const [slideindex, setSlideIndex] = useState(-1);
   const [language, setLanguage] = useState(getLanguage());
 
   const siteUrl = getSiteUrl();
@@ -39,29 +36,31 @@ const AnnualReportPage = ({
   const slides = annualReport.value[language].slides;
   const year = annualReport.value[language].year;
 
+  const md = new MobileDetect(window.navigator.userAgent);
+  const isMobile = md.mobile() || md.tablet();
+
   const otherLangSlides = language === 'en'
     ? annualReport.value.fr.slides
     : annualReport.value.en.slides;
 
-  const md = new MobileDetect(window.navigator.userAgent);
-  const isMobile = md.mobile() || md.tablet();
-
-  if (isNaN(slideindex)) {
-    // eslint-disable-next-line array-callback-return, consistent-return
-    slides.some(function(slide, index) {
-      if (currentSlug === '') {
-        setSlideIndex(-1);
-        return false;
-      } if (slide.value.slug.indexOf(currentSlug) > -1) {
-        setSlideIndex(index);
+  // eslint-disable-next-line array-callback-return, consistent-return
+  slides.some(function(slide, index) {
+    if (currentSlug === '') {
+      if (slide.value.slug === currentSlug) {
+        if (slideindex === -1) {
+          setSlideIndex(index);
+        }
+        translationKey = slide.translation_key;
         return false;
       }
-    });
-  }
-
-  if (slideindex > -1) {
-    translationKey = slides[slideindex].translation_key;
-  }
+    } else if (slide.value.slug.indexOf(currentSlug) > -1) {
+      if (slideindex === -1) {
+        setSlideIndex(index);
+      }
+      translationKey = slide.translation_key;
+      return false;
+    }
+  });
 
   otherLangSlides.forEach(function(slide) {
     if (slide.translation_key === translationKey) {
@@ -91,10 +90,10 @@ const AnnualReportPage = ({
     e.preventDefault();
     if (language === 'en') {
       setLanguage('fr');
-      window.history.pushState({}, '', `${siteUrl}/fr/${otherLangSlug}/`);
+      window.history.pushState({}, '', `${siteUrl}/fr/${otherLangSlug}`);
     } else {
       setLanguage('en');
-      window.history.pushState({}, '', `${siteUrl}/en/${otherLangSlug}/`);
+      window.history.pushState({}, '', `${siteUrl}/en/${otherLangSlug}`);
     }
   };
 
@@ -121,7 +120,7 @@ const AnnualReportPage = ({
     if (e.deltaY > 0 && slideindex < slides.length - 1) {
       goToNextSlide();
     }
-    if (e.deltaY < 0 && slideindex >= 0) {
+    if (e.deltaY < 0 && slideindex > 0) {
       goToPrevSlide();
     }
   }
@@ -165,21 +164,24 @@ const AnnualReportPage = ({
       tabIndex="0"
       role="button"
     >
-      { isMobile ? 
-      <div class="background-row show-for-small-only">
-        <div class="background-image" style={slideindex >=0 && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1 ? {backgroundColor: '#fff'} : {}}></div>
-      </div> : ''
-      }
-      
-      <AnnualReportMenu
-        toggleMenu={toggleMenu}
-        isOpen={isOpen}
-        slides={slides}
-        slideindex={slideindex}
-        setLanguage={setLanguageCode}
-      />
+      { isMobile
+        ? (
+          <div className="background-row show-for-small-only">
+            <div className="background-image" style={slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1 ? { backgroundColor: '#fff' } : {}} />
+          </div>
+        ) : ''}
+      { contentOpacity
+      && (
+        <AnnualReportMenu
+          toggleMenu={toggleMenu}
+          isOpen={isOpen}
+          slides={slides}
+          slideindex={slideindex}
+          setLanguage={setLanguageCode}
+        />
+      )}
       <>
-        <div className="liquid-container" style={isOpen ? { height: '100vh' } : {}}>
+        <div className="liquid-container">
           <div className="liquid-child" style={{ top: 0, left: 0, opacity: 1 }}>
             {slideindex >= 0 && (
               <Quote
@@ -192,7 +194,6 @@ const AnnualReportPage = ({
               <Slide
                 slide={isOpen ? slides[0] : slides[slideindex]}
                 slides={slides}
-                isOpen={isOpen}
                 contentOpacity={contentOpacity}
                 navigateToSlide={navigateToSlide}
               />
@@ -229,6 +230,7 @@ const AnnualReportPage = ({
                 : ''
               }
             `}
+                style={{ opacity: contentOpacity ? 1 : 0 }}
               >
                 {slideindex >= 0 ? (
                   <li className="link-item">
@@ -283,6 +285,7 @@ const AnnualReportPage = ({
                 }`}
                 aria-label="Prev"
                 onClick={goToPrevSlide}
+                style={{ opacity: contentOpacity ? 1 : 0 }}
               />
             ) : (
               ''
@@ -298,6 +301,7 @@ const AnnualReportPage = ({
                 }`}
                 aria-label="Next"
                 onClick={goToNextSlide}
+                style={{ opacity: contentOpacity ? 1 : 0 }}
               />
             ) : (
               ''
@@ -309,6 +313,7 @@ const AnnualReportPage = ({
                   ? ' light-background'
                   : ''
               }`}
+              style={{ opacity: contentOpacity ? 1 : 0 }}
             >
               {window.annualReport.value[language].title}
             </p>

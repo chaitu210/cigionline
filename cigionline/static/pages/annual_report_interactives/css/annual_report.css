@@ -1321,8 +1321,7 @@ p {
     animation-name: indexLogoTextFadeMobile;
     color: #fff;
     line-height: .9;
-    text-transform: uppercase;
-    display: inherit;
+    text-transform: uppercase
 }
 
 .intro-logo .text .annual {
