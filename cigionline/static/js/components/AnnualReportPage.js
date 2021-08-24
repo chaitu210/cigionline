@@ -91,21 +91,23 @@ const AnnualReportPage = ({
     }
   };
 
+  const navigateToSlide = (index) => {
+    let url = `${siteUrl}/${language}/`;
+    // navigate to home if slide is invalid.
+    if (index !== -1) {
+      const slug = slides[index].value.slug;
+      url = `${url}${slug}/`;
+    }
+    setSlideIndex(index);
+    window.history.pushState({}, '', url);
+  };
+
   const goToNextSlide = () => {
-    const nextSlug = slides[slideindex + 1].value.slug;
-    setSlideIndex(slideindex + 1);
-    window.history.pushState({}, '', `${siteUrl}/${language}/${nextSlug}/`);
+    navigateToSlide(slideindex + 1);
   };
 
   const goToPrevSlide = () => {
-    if (slideindex === 0) {
-      setSlideIndex(slideindex - 1);
-      window.history.pushState({}, '', `${siteUrl}/${language}/`);
-    } else {
-      const prevSlug = slides[slideindex - 1].value.slug;
-      setSlideIndex(slideindex - 1);
-      window.history.pushState({}, '', `${siteUrl}/${language}/${prevSlug}/`);
-    }
+    navigateToSlide(slideindex - 1);
   };
 
   function handleWheel(e) {
@@ -145,7 +147,6 @@ const AnnualReportPage = ({
     setTouchStart(NaN);
     setTouchEnd(NaN);
   }
-  console.log(isOpen, 'isOpen');
 
   return (
     <div
@@ -180,6 +181,7 @@ const AnnualReportPage = ({
                 slides={slides}
                 isOpen={isOpen}
                 contentOpacity={contentOpacity}
+                navigateToSlide={navigateToSlide}
               />
             ) : (
               isOpen ? (
@@ -188,6 +190,7 @@ const AnnualReportPage = ({
                   slides={slides}
                   isOpen={isOpen}
                   contentOpacity={contentOpacity}
+                  navigateToSlide={navigateToSlide}
                 />
               ) : <HomeSlide year={year} />
             )}
@@ -219,16 +222,16 @@ const AnnualReportPage = ({
                     <div className="dot-nav-tooltip">
                       <span>Home</span>
                     </div>
-                    <a href={`${siteUrl}/${language}`} className="link-dot">
+                    <button type="button" onClick={() => navigateToSlide(-1)} className="link-dot">
                       <div className="dot-circle" />
-                    </a>
+                    </button>
                   </li>
                 ) : (
                   ''
                 )}
                 {slides.map(function(slide, index) {
                   return slideindex === index ? (
-                    <li className="link-item">
+                    <li key={slide.id} className="link-item">
                       <div className="dot-nav-tooltip">
                         <span>{slide.value.title}</span>
                       </div>
@@ -237,16 +240,17 @@ const AnnualReportPage = ({
                       </div>
                     </li>
                   ) : (
-                    <li className="link-item">
+                    <li key={slide.id} className="link-item">
                       <div className="dot-nav-tooltip">
                         <span>{slide.value.title}</span>
                       </div>
-                      <a
-                        href={`${siteUrl}/${language}/${slide.value.slug}`}
+                      <button
+                        type="button"
+                        onClick={() => navigateToSlide(index)}
                         className="link-dot"
                       >
                         <div className="dot-circle" />
-                      </a>
+                      </button>
                     </li>
                   );
                 })}
