@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { debounce } from 'lodash';
+import {
+  isMobile
+} from "react-device-detect";
+import MobileDetect from 'mobile-detect'
 import AnnualReportMenu from './AnnualReportMenu';
 import {
   lightBackgroundSlugs,
@@ -38,6 +42,9 @@ const AnnualReportPage = ({
   const otherLangSlides = language === 'en'
     ? annualReport.value.fr.slides
     : annualReport.value.en.slides;
+
+  const md = new MobileDetect(window.navigator.userAgent);
+  const isMobile = md.mobile() || md.tablet();
 
   if (isNaN(slideindex)) {
     // eslint-disable-next-line array-callback-return, consistent-return
@@ -145,7 +152,7 @@ const AnnualReportPage = ({
     setTouchStart(NaN);
     setTouchEnd(NaN);
   }
-  console.log(isOpen, 'isOpen');
+  console.log(isOpen, 'isOpen', isMobile);
 
   return (
     <div
@@ -157,6 +164,12 @@ const AnnualReportPage = ({
       tabIndex="0"
       role="button"
     >
+      { isMobile ? 
+      <div class="background-row show-for-small-only">
+        <div class="background-image" style={slideindex >=0 && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1 ? {backgroundColor: '#fff'} : {}}></div>
+      </div> : ''
+      }
+      
       <AnnualReportMenu
         toggleMenu={toggleMenu}
         isOpen={isOpen}
