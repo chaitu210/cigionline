@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { debounce } from 'lodash';
+import MobileDetect from 'mobile-detect';
 import AnnualReportMenu from './AnnualReportMenu';
 import {
   lightBackgroundSlugs,
@@ -34,6 +35,9 @@ const AnnualReportPage = ({
 
   const slides = annualReport.value[language].slides;
   const year = annualReport.value[language].year;
+
+  const md = new MobileDetect(window.navigator.userAgent);
+  const isMobile = md.mobile() || md.tablet();
 
   const otherLangSlides = language === 'en'
     ? annualReport.value.fr.slides
@@ -160,13 +164,22 @@ const AnnualReportPage = ({
       tabIndex="0"
       role="button"
     >
-      <AnnualReportMenu
-        toggleMenu={toggleMenu}
-        isOpen={isOpen}
-        slides={slides}
-        slideindex={slideindex}
-        setLanguage={setLanguageCode}
-      />
+      { isMobile
+        ? (
+          <div className="background-row show-for-small-only">
+            <div className="background-image" style={slideindex >= 0 && lightBackgroundSlugs.indexOf(slides[slideindex].type) > -1 ? { backgroundColor: '#fff' } : {}} />
+          </div>
+        ) : ''}
+      { contentOpacity
+      && (
+        <AnnualReportMenu
+          toggleMenu={toggleMenu}
+          isOpen={isOpen}
+          slides={slides}
+          slideindex={slideindex}
+          setLanguage={setLanguageCode}
+        />
+      )}
       <>
         <div className="liquid-container">
           <div className="liquid-child" style={{ top: 0, left: 0, opacity: 1 }}>
@@ -217,6 +230,7 @@ const AnnualReportPage = ({
                 : ''
               }
             `}
+                style={{ opacity: contentOpacity ? 1 : 0 }}
               >
                 {slideindex >= 0 ? (
                   <li className="link-item">
@@ -271,6 +285,7 @@ const AnnualReportPage = ({
                 }`}
                 aria-label="Prev"
                 onClick={goToPrevSlide}
+                style={{ opacity: contentOpacity ? 1 : 0 }}
               />
             ) : (
               ''
@@ -286,6 +301,7 @@ const AnnualReportPage = ({
                 }`}
                 aria-label="Next"
                 onClick={goToNextSlide}
+                style={{ opacity: contentOpacity ? 1 : 0 }}
               />
             ) : (
               ''
@@ -297,6 +313,7 @@ const AnnualReportPage = ({
                   ? ' light-background'
                   : ''
               }`}
+              style={{ opacity: contentOpacity ? 1 : 0 }}
             >
               {window.annualReport.value[language].title}
             </p>

@@ -1,10 +1,13 @@
 import React from 'react';
+import MobileDetect from 'mobile-detect';
 import {
   getLanguage,
 } from './AnnualReportUtils';
 
 const HomeSlide = ({ year }) => {
   const language = getLanguage();
+  const md = new MobileDetect(window.navigator.userAgent);
+  const isMobile = md.mobile();
 
   return (
     <div className="liquid-container" style={{}}>
@@ -20,7 +23,7 @@ const HomeSlide = ({ year }) => {
             <div className="intro-logo">
               <span className="year">{year}</span>
               <>
-                <span className="text">
+                <span className="text" style={isMobile ? { display: 'inherit' } : {}}>
                   <span className="annual">Annual</span>
                   <br />
                   <span className="report">Report</span>
@@ -30,7 +33,7 @@ const HomeSlide = ({ year }) => {
           ) : (
             <div className="intro-logo">
               <>
-                <span className="text">
+                <span className="text" style={isMobile ? { display: 'inherit' } : {}}>
                   <span className="report">Rapport</span>
                   <br />
                   <span className="annual">Annuel</span>
