@@ -9,7 +9,7 @@ import Financials from './Financials';
 import Timeline from './Timeline';
 
 const Slide = ({
-  slide, slides, isOpen, contentOpacity,
+  slide, slides, isOpen, contentOpacity, navigateToSlide,
 }) => {
   const getComponent = () => {
     if (slide.type === '') {
@@ -21,6 +21,7 @@ const Slide = ({
           slides={slides}
           isOpen={isOpen}
           contentOpacity={contentOpacity}
+          navigateToSlide={navigateToSlide}
         />
       );
     } if (slide.type === 'messageslidepage') {

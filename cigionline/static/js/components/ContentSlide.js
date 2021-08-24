@@ -158,6 +158,7 @@ const ContentSlide = ({ slide, contentOpacity }) => {
           href={link.value.url}
           target="_blank"
           rel="noopener noreferrer"
+          key={link.id}
         >
           <div className="float-left content-link-icon">
             {contentLinkIcon(link.value.type)}

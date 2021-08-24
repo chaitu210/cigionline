@@ -8,6 +8,7 @@ const Quote = ({ slide, contentOpacity }) => {
     bgImageUrl = '';
   }
 
+  const bgVideoUrl = (slide.value.background_video?.original || '');
   return (
     <div
       className={
@@ -53,7 +54,7 @@ const Quote = ({ slide, contentOpacity }) => {
         </div>
       </div>
       <div>
-        {slide.value.background_video ? (
+        {bgVideoUrl.length ? (
           <video
             playsInline
             autoPlay
@@ -61,9 +62,10 @@ const Quote = ({ slide, contentOpacity }) => {
             loop
             id="background-video"
             className="video-background"
+            key={bgVideoUrl}
           >
             <source
-              src={`${originUrl}${slide.value.background_video.original}`}
+              src={`${originUrl}${bgVideoUrl}`}
               type="video/mp4"
             />
           </video>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import queryString from 'query-string';
 import {
   getLanguage,
@@ -6,7 +6,7 @@ import {
 } from './AnnualReportUtils';
 
 const TableOfContents = ({
-  slide, slides, isOpen, contentOpacity,
+  slide, slides, isOpen, contentOpacity, navigateToSlide,
 }) => {
   const originUrl = window.location.origin;
   const currentPath = window.location.pathname;
@@ -19,7 +19,7 @@ const TableOfContents = ({
   function loadAcknowledgements() {
     return slide.value.acknowledgement.groups.map(function(group) {
       return (
-        <>
+        <Fragment key={group.id}>
           <div className="grid-x credits-content">
             <div className="cell full">
               <h4 className="credits-title">{group.value.title}</h4>
@@ -47,7 +47,7 @@ const TableOfContents = ({
               );
             })}
           </div>
-        </>
+        </Fragment>
       );
     });
   }
@@ -62,12 +62,17 @@ const TableOfContents = ({
     return slidesExceptTOC.map(function(slideIter, index) {
       const hrefUrl = `${siteUrl}/${language}/${slideIter.value.slug}/`;
       return index < firstHalf ? (
-        <div className="grid-x slide-link">
+        <div key={slideIter.id} className="grid-x slide-link">
           <div className="cell small-1 medium-1">
             <p className="slide-number ">{index + 1}</p>
           </div>
           <div className="cell small-11 medium-11">
-            <a href={hrefUrl}>{slideIter.value.title}</a>
+            <a
+              href={hrefUrl}
+              onClick={(e) => { e.preventDefault(); navigateToSlide(index + 1); }}
+            >
+              {slideIter.value.title}
+            </a>
           </div>
         </div>
       ) : (
@@ -76,7 +81,7 @@ const TableOfContents = ({
     });
   }
 
-  function secondHalfSlides() {
+  const secondHalfSlides = () => {
     const slidesExceptTOC = slides.filter(function(iterslide) {
       return iterslide.value.slug !== slide.value.slug;
     });
@@ -86,19 +91,24 @@ const TableOfContents = ({
     return slidesExceptTOC.map(function(slideIter, index) {
       const hrefUrl = `${siteUrl}/${language}/${slideIter.value.slug}/`;
       return index > firstHalf ? (
-        <div className="grid-x slide-link">
+        <div key={slideIter.id} className="grid-x slide-link">
           <div className="cell small-1 medium-1">
             <p className="slide-number ">{index + 1}</p>
           </div>
           <div className="cell small-11 medium-11">
-            <a href={hrefUrl}>{slideIter.value.title}</a>
+            <a
+              href={hrefUrl}
+              onClick={(e) => { e.preventDefault(); navigateToSlide(index + 1); }}
+            >
+              {slideIter.value.title}
+            </a>
           </div>
         </div>
       ) : (
         ''
       );
     });
-  }
+  };
 
   return (
     <div
